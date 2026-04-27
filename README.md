@@ -23,7 +23,7 @@ The notebooks are designed to run on **Kaggle (T4 GPU, 12 h budget)**. Execute i
 | # | Notebook | Method | Architecture | Epochs | Output |
 |---|----------|--------|-------------|--------|--------|
 | 4 | `supervised-all-anatomies.ipynb` | Supervised | ResNet-18 (1-ch), BCEWithLogitsLoss | 20 | `checkpoints/sup_{knee,brain,combined}/best.pt` |
-| 5 | `simclr-all-anatomies-new.ipynb` | SimCLR | ResNet-50 encoder + 128-d projection head | 20 | `checkpoints/simclr_{knee,brain,combined}/best.pt` |
+| 5 | `simclr-all-anatomies-new.ipynb` | SimCLR | ResNet-18 encoder + 128-d projection head | 20 | `checkpoints/simclr_{knee,brain,combined}/best.pt` |
 | 6 | `vit-mae-all-anatomies.ipynb` | MAE | ViT-Small/16 encoder + lightweight decoder, 75% masking | 20 | `checkpoints/mae_{knee,brain,combined}/best.pt` |
 | 7 | `dino-all-anatomies.ipynb` | DINO | ViT-Small/16 student-teacher (EMA) + 65536-d head | 20 | `checkpoints/dino_{knee,brain,combined}/best.pt` |
 | 8 | `dae-all-anatomies.ipynb` | DAE | Conv encoder (512-d) + decoder, multi-corruption | 20 | `checkpoints/dae_{knee,brain,combined}/best.pt` |
@@ -79,7 +79,7 @@ Trains 3 ResNet-18 binary classifiers (knee, brain, combined) as the **supervise
 
 ### 5. `simclr-all-anatomies-new.ipynb`
 Trains 3 SimCLR models (contrastive learning) for anomaly detection.
-- **ResNet-50 encoder** (1-channel input) → 2048-d features
+- **ResNet-18 encoder** (1-channel input) → 512-d features
 - 128-d projection head, NT-Xent loss with **τ = 0.5** (prevents feature collapse on grayscale MRI)
 - Anomaly scoring: **kNN (k=5, cosine)** on L2-normalized encoder features
 - Includes collapse check (feature STD + mean cosine similarity), t-SNE, NN retrieval
@@ -146,7 +146,7 @@ DINO ablation study addressing **representational collapse** on single-anatomy d
 | Method | Type | Architecture | Params | Anomaly Scoring |
 |--------|------|-------------|--------|-----------------|
 | **Supervised** | Supervised | ResNet-18, 1-ch input, binary FC head | 11.2M | Sigmoid probability |
-| **SimCLR** | Self-supervised | ResNet-50, 1-ch input, 128-d projection | 24.6M | kNN (k=5, cosine) |
+| **SimCLR** | Self-supervised | ResNet-18, 1-ch input, 128-d projection | ~11.2M | kNN (k=5, cosine) |
 | **MAE** | Self-supervised | ViT-Small/16 encoder (384-d) + decoder (192-d) | ~23M | Reconstruction MSE + kNN |
 | **DINO** | Self-supervised | ViT-Small/16, teacher-student EMA, 65536-d head | ~22M | kNN (k=5, cosine) on teacher |
 | **DAE** | Self-supervised | Conv encoder (512-d bottleneck) + decoder | ~7M | Reconstruction MSE + kNN |
@@ -230,7 +230,7 @@ mri_artifact/
 │
 ├── ── Training (one per method) ──
 ├── supervised-all-anatomies.ipynb        # Supervised ResNet-18 (3 variants)
-├── simclr-all-anatomies-new.ipynb        # SimCLR ResNet-50 (3 variants) ← USE THIS
+├── simclr-all-anatomies-new.ipynb        # SimCLR ResNet-18 (3 variants) ← USE THIS
 ├── vit-mae-all-anatomies.ipynb           # MAE ViT-Small/16 (3 variants)
 ├── dino-all-anatomies.ipynb              # DINO ViT-Small/16 (3 variants)
 ├── dae-all-anatomies.ipynb               # DAE Conv encoder-decoder (3 variants)
